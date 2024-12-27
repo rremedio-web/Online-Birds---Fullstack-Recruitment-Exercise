@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 3 Boilerplate</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/primevue/umd/primevue.min.js"></script>
+    <script src="https://unpkg.com/@primevue/themes/umd/aura.min.js"></script>
+    <link href="dist/output.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div class="container mx-auto px-2">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-[url('assets/images/secondary-image-1.webp')] bg-right-bottom bg-no-repeat bg-[length:75%] lg:bg-[length:40%] py-16">
+                <div class="pt-8 prose">
+                    <h1>Title</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                </div>
+            <div>
+                <Carousel :value="images" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions">
+                    <template #item="slotProps">
+                        <div class="dark:border-surface-700 rounded m-2  p-4">
+                            <div class="mb-4">
+                                <div class="relative mx-auto">
+                                    <img :src="slotProps.data" style="width:100%"/>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template #prevIcon>
+                        <img src="dist/assets/images/arrow-left-solid.svg" />
+                    </template>
+                
+                    <template #nextIcon>
+                        <img src="dist/assets/images/arrow-right-solid.svg" />
+                    </template>
+                </Carousel>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+        const app = createApp({
+            data() {
+                return {
+                    images: []
+                }
+            },
+            mounted() {
+                fetch('http://localhost:3000/images/', {
+                    headers: { 'Content-type': 'application/json' },
+                }).then(res=>res.json()).then((response) => {
+                    this.images = response;
+                }).catch( (error) => {
+                    this.images = error;
+                });
+            }
+        })
+        app.use(PrimeVue.Config, {
+        theme: {
+            preset: PrimeVue.Themes.Aura,
+            options: {
+                darkModeSelector: '.fake-dark-selector', 
+                cssLayer: {
+                    name: 'primevue',
+                    order: 'tailwind-base, primevue, tailwind-utilities'
+                }
+            }
+        }
+        
+      });
+      app.component('Carousel', PrimeVue.Carousel);
+      app.mount('#app');
+    </script>
+</body>
+</html>
